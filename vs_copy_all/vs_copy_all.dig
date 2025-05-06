@@ -1,0 +1,34 @@
+_export:
+  database: ${src_database}
+  !include : 'config.yml'
+  
++create:
+  if>: ${copy_all_table}
+  _do:
+    +get_table_name:
+      td_for_each>:
+      query: "select table_name from information_schema.tables where table_schema = '${src_database}' and table_name not in ${skip_tables}" 
+      _parallel: true 
+      _do:
+        +copy_data: 
+          td>:
+          query: "select * from ${src_database}.${td.each.table_name}"
+          result_connection: ${connection_name}
+          result_settings:   
+            user_database_name: ${dest_database}
+            user_table_name: ${td.each.table_name} 
+            mode: ${mode}
+  _else_do:
+    +get_table_name:
+      for_each>:
+        table : ${tables_info}
+      _parallel: true   
+      _do:
+        +copy_data: 
+          td>:
+          query: "select * from ${src_database}.${table.table_name} where SUBSTRING(CAST(FROM_UNIXTIME(${table.date_column}) AS VARCHAR),1,10) between ${table.date_range}"
+          result_connection: ${connection_name}
+          result_settings:   
+            user_database_name: ${dest_database}
+            user_table_name: ${table.table_name} 
+            mode: ${mode}

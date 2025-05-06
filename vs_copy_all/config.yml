@@ -1,0 +1,15 @@
+connection_name: to_kuiper
+src_database: kuiper_demo
+dest_database: kuiper_demo
+mode: replace                                                 # use append to add to existing data
+copy_all_table: true                                          # to copy specific tables set copy_all_table to false, and mention tables info   
+skip_tables: ('')   # mention the table names you want to skip, if no such table the leave empty quotes  
+# tables_info:
+#   - table_name: movietweetings_movies
+#     date_column: create_date
+#     date_range: >
+#      '1900-01-01' and '2021-12-31'
+#   - table_name: movietweetings_movies
+#     date_column: from_unixtime(time)                           #use from_unixtime(time) function for default time columns
+#     date_range: >
+#      '1900-01-01' and '2021-12-31'
